@@ -6,7 +6,7 @@ This repository illustrates how GitHub Actions can be used to automate software 
 
 ### What are GitHub Actions?
 
-GitHub Actions are scripts that run on a containerized platform hosted on GitHub. A GitHub action is defined by creating a `.yml` file in the `.github/workflows` directory of a repository (as done here). Such an action needs to be follow a specific format as described in the [GitHub documentation](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions). An example is provided in  the `triage_issues.yml` action file:
+GitHub Actions are scripts that run on a containerized platform hosted on GitHub. A GitHub action is defined by creating a `.yml` file in the `.github/workflows` directory of a repository (as done here). Such an action needs to follow a specific format as described in the [GitHub documentation](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions). An example is provided in the `triage_issues.yml` action file:
 
 ```yaml
 name: "Label Issues for Triage"
@@ -38,16 +38,16 @@ We will see other types of events and actions later on.
 
 If you are familiar with **containerized applications**, you will notice familiar concepts. One key aspect of a container is to specify its base operating system. Here, we specify that we want to run the latest available version of Ubuntu, which is a Linux operating system. Jobs are similar to `RUN` commands in Docker but are tailored specifically to the task of automating processes and provide many capabilities related to interacting with GitHub.
 
-Now that you understand the basic structure of a GitHub Action, we will see on in, well, action.
+Now that you understand the basic structure of a GitHub Action, we will see it in, well, action.
 
 ### 🚀 Galactic Pizza Delivery Time Estimator
 
 In this exercise, you will work with a small application called the **Galactic Pizza Delivery Time Estimator**. The program calculates how long it takes to deliver a pizza to different planets using several factors: the destination distance, the delivery mode (normal, turbo, or hyperjump), a surge-load multiplier, and a weather-delay component. Some planets involve long-distance fatigue penalties, while incorrect inputs or unexpected weather values trigger errors.
 
-The application can be found in in the `spacedelivery` folder. There are two versions:
+The application can be found in the `spacedelivery` folder. There are two versions:
 
-- `python`: the Python version is a single module (`delivery.py`) and just one function. That module will be used for illustrating **building**, **testing**, and **releasing** an applications using GitHub Actions.
-- `web` : the web version is a static web application of essentially the same functionality as the Python version. It also implments a user interface. This version is used to illustrate how to **deploy** a static web application to GitHub Pages via GitHub Actions.
+- `python`: the Python version is a single module (`delivery.py`) and just one function. That module will be used for illustrating **building**, **testing**, and **releasing** applications using GitHub Actions.
+- `web` : the web version is a static web application of essentially the same functionality as the Python version. It also implements a user interface. This version is used to illustrate how to **deploy** a static web application to GitHub Pages via GitHub Actions.
 
 The application itself is secondary and only used to illustrate CI/CD concepts.
 
@@ -56,7 +56,7 @@ The application itself is secondary and only used to illustrate CI/CD concepts.
 The directory structure is as follows:
 
 ```bash
-actions/
+github-actions/
 ├── .github/                          # GitHub-specific configuration
 │   └── workflows/                    # This is where GitHub will look for `.yml` Action files. You'll need to create this folder.
 ├── deployment_scripts/               # Python scripts that will be called by the *release* Action
@@ -70,7 +70,7 @@ actions/
 
 ### Getting Started
 
-To get started, fork this repository. You should only make changes in your own copy of the repository. Once you forked the repository, go to the *Settings* tab of your forked repository and click on *Pages* on the left-hand side. There, click on the *Source* drop-down and select *GitHub Actions*. Note, that you need to make the selection even if the value is already pre-populated:
+To get started, fork this repository. You should only make changes in your own copy of the repository. Once you have forked the repository, go to the *Settings* tab of your forked repository and click on *Pages* on the left-hand side. There, click on the *Source* drop-down and select *GitHub Actions*. Note that you need to make the selection even if the value is already pre-populated:
 
 ![GitHub Pages Configuration](docs/activate_pages.png)
 
@@ -103,15 +103,15 @@ The diagram below shows the steps of the CI/CD pipeline that we will build in th
 We will implement GitHub Actions that are automatically triggered by events in GitHub, namely:
 - `push` event: runs tests whenever a new commit is pushed to the repository
 - `pull_request` event: runs tests whenever a new pull request is opened against the repository
-- `merge` event: runs tests whenever the PR is merged into the `main` branch.
+- `push` to `main`: triggered whenever a PR is merged into the `main` branch (or code is pushed directly to it) and deploys the application.
 
-These events will trigger GitHub Actions to build, test (`test.yml`), release (`release.yml`), and deploy (`deploy.yml`) the application. You will create this Actions as you follow the exercise instructions.
+These events will trigger GitHub Actions to build, test (`test.yml`), release (`release.yml`), and deploy (`deploy.yml`) the application. You will create these Actions as you follow the exercise instructions.
 
 ## Exercise 1: **Testing**
 
 One of the tasks that goes along with making changes to your code is testing. We have learned how to create test cases and even implemented unit tests that can be executed automatically. As part of a CI (Continuous Integration) pipeline, we can run tests automatically whenever a new commit is pushed to the repository. In this exercise, we will integrate that part of the CI pipeline using GitHub Actions.
 
-In the `.github/workflows` directory, create a new file names `test.yml` and copy the following contents:
+In the `.github/workflows` directory, create a new file named `test.yml` and copy the following contents:
 
 ```yaml
 name: Build and test
@@ -159,7 +159,7 @@ Is your Action failing? That's ok. That's what we expect. Let's fix it. Check th
 
 Once you update the test case, push your changes to the repository with the same commands as above. Again, navigate to the Actions tab in GitHub to see the output of the test run.
 
-This exercise illustrates one of the most fundamental parts of a CI/DC pipeline: automated quality assurance by executing test cases. That provides developers early warning signs that something is broken and should be fixed immediately.
+This exercise illustrates one of the most fundamental parts of a CI/CD pipeline: automated quality assurance by executing test cases. That provides developers early warning signs that something is broken and should be fixed immediately.
 
 ## Exercise 2: **Release**
 
@@ -167,7 +167,7 @@ Imagine you have completed making changes to the *Galactic Pizza Delivery Time E
 
 ℹ️ [**Semantic versioning**](https://semver.org) is a standardized way of assigning version numbers so that users can understand the scope and impact of changes in a release. A semantic version has the form `MAJOR.MINOR.PATCH` (e.g., `1.8.16`). The `MAJOR` number increases when changes break backward compatibility, `MINOR` increases when new features are added without breaking existing behavior, and `PATCH` increases for backwards-compatible bug fixes.
 
-Keep up with version can be tedious. So we will let GitHub Action handle the versioning for us. Create a new file in `.github/workflows` and copy the content below:
+Keeping up with versions can be tedious, so we will let GitHub Actions handle the versioning for us. Create a new file named `release.yml` in `.github/workflows` and copy the content below:
 
 ```yaml
 name: Update version and add release notes to README
@@ -229,11 +229,11 @@ The Action itself doesn't do a lot. It just calls Python scripts that reside in 
 - `update_version_number.py`: reads the version number from `__version__.py` and increments it.
 - `update_release_notes.py`: reads the PR title and body and adds them to the `README.md` file.
 
-These Python scripts use the information you enter in your PR title and description. To increase the version number, it checks if the PR title contains `major` or `minor`. If so, it will increase the respective part of the semantic version number. The description of the PR will be used as the release notes that are inserted into the README file.
+These Python scripts use the information you enter in your PR title and description. To increase the version number, the script checks if the PR title contains `major` or `minor`. If so, it will increase the respective part of the semantic version number. The description of the PR will be used as the release notes that are inserted into the README file.
 
 ### Tasks A
 
-Once you created the `release.yml` Action file, push it to the repository as described above. Now, go to the `Pull request` tab of your GitHub repository. Create a new PR with the following info:
+Once you have created the `release.yml` Action file, push it to the repository as described above. Now, go to the `Pull request` tab of your GitHub repository. Create a new PR with the following info:
 
 - Title: `Emergency fix for cheese crust pizza`
 - Body:
@@ -246,7 +246,7 @@ Create the PR and go to the `Actions` tab. You should see the release Action run
 
 ❓ Can you see what part of the version number was updated (e.g., major, minor, patch)? Do you know why?
 
-We don't really want to merge this PR. Got ahead and click on `Close pull request` at the very bottom of the `Conversation` tab of the PR.
+We don't really want to merge this PR. Go ahead and click on `Close pull request` at the very bottom of the `Conversation` tab of the PR.
 
 ### Tasks B
 
@@ -264,13 +264,13 @@ Create the PR and check again on the Action execution and then the changes it ma
 
 Let's keep this PR open since we'll use it in the next exercise.
 
-This exercise illustrated how we can use GitHub Actions to automate the release process, letting developers focus on being productive and leaving tedious task up to the CI/CD pipeline.
+This exercise illustrated how we can use GitHub Actions to automate the release process, letting developers focus on being productive and leaving tedious tasks up to the CI/CD pipeline.
 
 ## Exercise 3: Deploy
 
-To make our application available to users, we need to deploy it to some server. For this exercise, we will use GitHub Pages to host our application. GitHub pages. GitHub Pages is a free hosting service provided by GitHub that allows you to publish static websites directly from a GitHub repository.
+To make our application available to users, we need to deploy it to some server. For this exercise, we will use GitHub Pages to host our application. GitHub Pages is a free hosting service provided by GitHub that allows you to publish static websites directly from a GitHub repository.
 
-Create a file in `.github/wokflows` and name it `deploy.yml`. Then copy the contents below:
+Create a file in `.github/workflows` and name it `deploy.yml`. Then copy the contents below:
 
 ```yml
 name: Deploy static content to Pages
@@ -319,13 +319,13 @@ jobs:
         uses: actions/deploy-pages@v4
 ```
 
-Now, push the changes to the `development` branch. Go to the PR that should still be open. If not, you can just create a new PR merging the `development` branch into the `main` branch. Next, click on `Merge pull request`. That event will trigger the deployment script above and deploy the app to gitHub pages. Go to the page:
+Now, push the changes to the `development` branch. Go to the PR that should still be open. If not, you can just create a new PR merging the `development` branch into the `main` branch. Next, click on `Merge pull request`. That event will trigger the deployment script above and deploy the app to GitHub Pages. Go to the page:
 
 https://enpm611.github.io/github-actions
 
-but replace the user name to matched your forked repository. You should see the app running.
+but replace the user name to match your forked repository. You should see the app running.
 
-This exercise illustated the last step of the CI/CD pipeline, which is delivering the application to its final destination from where users will be able to access and interact with it. You have now implemented your own CI/CD pipeline. You can find many more actions in the [GitHub Marketplace](https://github.com/marketplace?type=actions).
+This exercise illustrated the last step of the CI/CD pipeline, which is delivering the application to its final destination from where users will be able to access and interact with it. You have now implemented your own CI/CD pipeline. You can find many more actions in the [GitHub Marketplace](https://github.com/marketplace?type=actions).
 
 
 # Release notes
