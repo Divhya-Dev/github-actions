@@ -341,3 +341,7 @@ This section should be populated by the *release* Action.
 
 - Can now calculate delivery to Mars!
 - Minor bug fixes
+
+## Release Notes — v1.5.1 — Update test.yml (2026-11-02)
+
+Trigger on every pull request created.

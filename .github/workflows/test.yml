@@ -3,6 +3,8 @@ name: Build and test
 on:
   push:
     branches: ["development"] # Triggered when a commit is pushed to the development branch
+  pull_request:
+    branches: ["main"] # Triggered when a pull request is opened against the main branch
 
 jobs:
   build:
@@ -27,3 +29,7 @@ jobs:
       # Discovers and runs the tests 
       - name: Run tests
         run: pytest -q
+      
+      # Runs flake8 to check for code style violations
+      - name: Run flake8
+        run: flake8 spacedelivery deployment_scripts tests --max-line-length=100
